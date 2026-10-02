@@ -42,4 +42,3 @@ Download and registration of the GitHub Actions runner remain separate because
 registration tokens are short-lived credentials and must never be baked into a
 template. After cloning a reusable VM, configure and install its runner service
 using a newly generated organization registration token.
-

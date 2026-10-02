@@ -21,4 +21,3 @@ cloud-init/*.rendered
 .vscode/
 __pycache__/
 *.pyc
-

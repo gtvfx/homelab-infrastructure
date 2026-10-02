@@ -26,4 +26,3 @@ The validated Debian 13 runner configuration is documented under
 [`runners/linux`](runners/linux/README.md). Its provisioning script installs
 the native compiler toolchain and prepares Python 3.11.9 for compatibility with
 `actions/setup-python` on this otherwise unsupported distribution.
-
