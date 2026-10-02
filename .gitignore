@@ -1,0 +1,24 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*credentials*
+*registration-token*
+
+# Infrastructure state and generated configuration
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.terraform/
+cloud-init/*.rendered
+
+# Local caches and editor files
+.cache/
+.idea/
+.vscode/
+__pycache__/
+*.pyc
+
