@@ -6,8 +6,9 @@
 - Treat `STATUS.md` as the project handoff, then verify mutable external
   state using GitHub, Proxmox, or the target host as appropriate.
 - Do not infer project status solely from chat history.
-- Before finishing work that changes infrastructure, automation, security
-  policy, or validation state, update `STATUS.md`.
+- Update `STATUS.md` after each material milestone, before a long-running or
+  interruption-prone operation, and again before finishing. Do not defer the
+  only handoff record to the final chat response.
 - Record concrete evidence such as commit SHAs, pull requests, workflow runs,
   commands, and observed host state.
 - Clearly distinguish planned, implemented, applied, and validated work.
