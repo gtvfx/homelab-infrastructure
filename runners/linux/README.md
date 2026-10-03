@@ -16,6 +16,10 @@ Linux runner. It does not register a runner with GitHub.
 The build environment has been validated with Python linting, native Rust
 formatting/Clippy/tests, PyO3 linking, wheel building, and Python contract tests.
 
+The validated virtual hardware is documented in the
+[`proxmox`](proxmox/README.md) profile. Host-specific identifiers and GitHub
+registration remain outside that reusable definition.
+
 ## Provision build tools
 
 Run from an administrative account with root privileges:
