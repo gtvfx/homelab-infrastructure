@@ -12,6 +12,14 @@ Codex is the primary working environment for the project. Repository
 documentation preserves confirmed state and operating decisions across chats,
 while live system evidence remains authoritative.
 
+## Living roadmap
+
+This roadmap is a living planning document, not a fixed commitment. Phases,
+ordering, technologies, and completion criteria should evolve as the homelab
+produces new evidence and as needs change. Add, remove, merge, split, defer, or
+reorder work when there is a clear reason, and record the decision so obsolete
+assumptions do not quietly remain active requirements.
+
 ## Operating principles
 
 - Prefer reproducible infrastructure over manually maintained machines.
@@ -46,11 +54,12 @@ procedures, and safe storage-management practices.
 
 **State:** Active priority.
 
-The original project brief proposed Ubuntu LTS on `pve02`. The validated
-implementation has evolved to Debian 13 on `pve04`, currently represented by
-`gha-linux-01`. Treat the distribution and host change as an evidence-based
-design evolution rather than silently assuming the original proposal remains
-current.
+The original project brief proposed Ubuntu LTS on `pve02`. That proposal is
+now superseded by the validated Debian 13 implementation on `pve04`,
+currently represented by `gha-linux-01`. A separate Ubuntu runner on
+`pve02` is not a current requirement. Reconsider it only if measured
+capacity, redundancy, compatibility, or workload-isolation needs justify
+another Linux runner design.
 
 Completion requires:
 
@@ -176,6 +185,8 @@ stable identities and must not be used as the sole basis for action.
 - Component README files document implementation and operating procedures.
 - `AGENTS.md` defines the rules agents must follow while working here.
 
-Update the roadmap when priorities or intended outcomes change. Update status
-as live work progresses. Do not mark a phase complete without concrete
-verification evidence.
+Update the roadmap whenever priorities, needs, sequencing, or intended
+outcomes change. Historical proposals may remain as clearly labeled context,
+but they must not be mistaken for active requirements. Update status as live
+work progresses. Do not mark a phase complete without concrete verification
+evidence.

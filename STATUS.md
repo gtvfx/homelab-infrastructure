@@ -12,6 +12,10 @@ Complete roadmap phase 2: turn the validated `pve04` Linux GitHub Actions
 runner into a reproducible, secure runner lifecycle that can provision fresh
 workers and, eventually, a clean Proxmox template.
 
+The earlier Ubuntu-on-`pve02` proposal is superseded. No separate runner on
+`pve02` is currently required; revisit that option only in response to
+measured capacity, redundancy, compatibility, or isolation needs.
+
 ## Live runner state
 
 As of the last verification:

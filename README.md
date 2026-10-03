@@ -8,8 +8,9 @@ as they are converted from validated manual procedures.
 
 ## Project direction
 
-Read [`ROADMAP.md`](ROADMAP.md) for the long-term vision, operating
-principles, phased infrastructure plan, and completion criteria.
+Read [`ROADMAP.md`](ROADMAP.md) for the evolving long-term vision, operating
+principles, phased infrastructure plan, and completion criteria. The roadmap
+is expected to change as evidence and needs develop.
 
 ## Current status
 
