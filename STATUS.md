@@ -36,9 +36,9 @@ all four nodes on 2026-10-03:
 - `pve04`: Proxmox VE 9.2.21, kernel 7.0.14-20-pve
 
 Connection addresses and private key material are intentionally excluded from
-this public repository. The bare node names are not currently resolvable from
-the Windows Codex host, so local SSH aliases or the protected connection map
-must be used.
+this public repository. Protected local SSH aliases for `pve01` through
+`pve04` are configured on the Windows Codex host and were verified with
+non-interactive connections.
 
 ## Completed validation
 
