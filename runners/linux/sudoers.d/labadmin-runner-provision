@@ -1,0 +1,1 @@
+labadmin ALL=(root) NOPASSWD: /usr/bin/bash /opt/homelab-infrastructure/runners/linux/provision-build-tools.sh

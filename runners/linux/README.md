@@ -36,6 +36,26 @@ The script:
 Versions and paths can be overridden with environment variables documented at
 the top of the script.
 
+## Optional remote maintenance
+
+The example policy in
+[`sudoers.d/labadmin-runner-provision`](sudoers.d/labadmin-runner-provision)
+allows `labadmin` to run only the root-owned provisioning script without a
+password. It does not grant unrestricted passwordless sudo access.
+
+Install and validate it as root:
+
+```bash
+install -o root -g root -m 0440 \
+  runners/linux/sudoers.d/labadmin-runner-provision \
+  /etc/sudoers.d/labadmin-runner-provision
+visudo -cf /etc/sudoers.d/labadmin-runner-provision
+```
+
+Keep `/opt/homelab-infrastructure` and the authorized script root-owned. If an
+unprivileged account can edit the script, this narrow rule becomes equivalent
+to unrestricted root access.
+
 ## Registration boundary
 
 Download and registration of the GitHub Actions runner remain separate because
