@@ -26,3 +26,9 @@ The validated Debian 13 runner configuration is documented under
 [`runners/linux`](runners/linux/README.md). Its provisioning script installs
 the native compiler toolchain and prepares Python 3.11.9 for compatibility with
 `actions/setup-python` on this otherwise unsupported distribution.
+
+## Proxmox nodes
+
+Common host configuration is documented under [`nodes/common`](nodes/common/README.md).
+The initial policy enables key-only SSH administration while retaining
+key-based root access for Proxmox maintenance.
