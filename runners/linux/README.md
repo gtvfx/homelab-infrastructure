@@ -56,6 +56,30 @@ for unattended bootstrap. Establish the intended long-term administrative
 authentication and sudo policy before treating a clone as production-ready.
 The bootstrap does not download or register a GitHub Actions runner.
 
+## Prepare a golden image
+
+After validating a newly bootstrapped, unregistered VM, use
+[`prepare-runner-template.sh`](prepare-runner-template.sh) to remove
+clone-specific identity and power it off for conversion to a Proxmox template.
+The script refuses to run if it detects GitHub runner credentials or a runner
+systemd service.
+
+Template preparation is intentionally guarded:
+
+```bash
+sudo env CONFIRM_TEMPLATE_PREPARATION=yes \
+  bash /opt/homelab-infrastructure/runners/linux/prepare-runner-template.sh
+```
+
+Set `STALE_USER` only when a source image contains an account that must not be
+carried into the template. The script removes that account and its home
+directory, so inspect the guest first and specify the account explicitly.
+
+Cloud-init injects the administrative SSH key and regenerates the machine ID,
+SSH host keys, network configuration, and temporary administrative sudo policy
+when a clone first boots. Complete the intended long-term sudo policy before
+registering the clone with GitHub.
+
 ## Optional remote maintenance
 
 The example policy in
