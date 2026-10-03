@@ -52,7 +52,7 @@ procedures, and safe storage-management practices.
 
 ### 2. Reusable Linux GitHub Actions runner template
 
-**State:** Active priority.
+**State:** Completed and validated on 2026-10-03.
 
 The original project brief proposed Ubuntu LTS on `pve02`. That proposal is
 now superseded by the validated Debian 13 implementation on `pve04`,
@@ -76,7 +76,7 @@ Completion requires:
 
 ### 3. Linux GitHub Actions runner fleet
 
-**State:** Planned after phase 2.
+**State:** Next planning phase; scale only in response to measured need.
 
 Create multiple independently registered Linux workers from the validated
 template. Define capacity, labels, runner groups, repository access,
