@@ -80,6 +80,42 @@ SSH host keys, network configuration, and temporary administrative sudo policy
 when a clone first boots. Complete the intended long-term sudo policy before
 registering the clone with GitHub.
 
+## Install and register the runner
+
+Runner binary installation and GitHub registration are separate operations.
+[`install-github-runner.sh`](install-github-runner.sh) downloads the pinned
+Linux x64 release, verifies its GitHub-published SHA-256 digest, installs its
+runtime dependencies, and leaves the host unregistered:
+
+```bash
+sudo bash /opt/homelab-infrastructure/runners/linux/install-github-runner.sh
+```
+
+Generate a short-lived organization registration token immediately before
+registration. Supply it only through the process environment; never save it in
+this repository, a template, shell profile, or command transcript:
+
+```bash
+sudo env RUNNER_TOKEN='<short-lived-token>' \
+  bash /opt/homelab-infrastructure/runners/linux/register-github-runner.sh
+```
+
+Registration defaults to organization `gtvfx-envoy`, runner group
+`trusted-ci`, and custom labels `debian-13,ci`. The runner name defaults to the
+short hostname. Override the documented environment variables only when the
+new worker intentionally differs from this profile.
+
+Removal also requires a newly generated short-lived token:
+
+```bash
+sudo env RUNNER_TOKEN='<short-lived-removal-token>' \
+  bash /opt/homelab-infrastructure/runners/linux/unregister-github-runner.sh
+```
+
+The registration scripts never print or persist the supplied token. GitHub's
+runner configuration stores its own credentials under the runner account after
+successful registration; those files must never be copied into a template.
+
 ## Optional remote maintenance
 
 The example policy in
