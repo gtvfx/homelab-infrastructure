@@ -16,6 +16,11 @@ The immediate planning objective is phase 3: determine the required Linux
 runner fleet from measured demand before creating or retaining additional
 workers.
 
+The current decision is to consolidate Linux CI on `gha-linux-01` and retire
+the older `ubuntuserver` VM from the Synology DS923+. Its GitHub runner
+registration has been removed; the VM itself has not yet been shut down or
+deleted.
+
 The earlier Ubuntu-on-`pve02` proposal is superseded. No separate runner on
 `pve02` is currently required; revisit that option only in response to
 measured capacity, redundancy, compatibility, or isolation needs.
@@ -28,8 +33,10 @@ As of the last verification:
 - GitHub Actions runner version: `2.337.0`.
 - Organization runner group: `trusted-ci`.
 - Labels: `self-hosted`, `Linux`, `X64`, `debian-13`, and `ci`.
-- The runner group is limited to `gtvfx-envoy/envoy` and
-  `gtvfx-envoy/devtools`.
+- The runner group is limited to `gtvfx-envoy/envoy`,
+  `gtvfx-envoy/devtools`, `gtvfx-envoy/robinhood`,
+  `gtvfx-envoy/validation`, `gtvfx-envoy/despatch`, and
+  `gtvfx-envoy/envoy_utils`.
 - The validated VM profile is Debian 13 with 4 vCPUs, 8 GiB fixed memory, and
   a 120 GiB SCSI system disk.
 - Proxmox VM 104, `debian13-gha-runner-template`, is a stopped, unregistered
@@ -37,9 +44,10 @@ As of the last verification:
   credentials.
 - After acceptance cleanup, `pve04` contains only production runner VM 103
   and template VM 104. The `pve04-nvme` thin pool was 1.57% allocated.
-- An older organization runner named `ubuntuserver` was also observed online.
-  Its host, purpose, recent utilization, and continued need have not yet been
-  reconciled with the decision that a separate Ubuntu runner is unnecessary.
+- GitHub runner ID 11, `ubuntuserver`, was removed from the organization on
+  2026-10-03 after its Linux workflow repositories were granted access to
+  `trusted-ci`. The organization runner inventory now contains only
+  `gha-linux-01` and the Windows runner `MINI-PC`.
 
 ## Proxmox node access
 
@@ -98,6 +106,12 @@ The following evidence confirms the runner can execute the intended workloads:
 - The temporary runner was cleanly unregistered and disappeared from the
   organization runner list. VM 105 and its dedicated volumes were then
   deleted, and the temporary validation branch was removed.
+- The `ubuntuserver` retirement transition expanded `trusted-ci` access only
+  to the four repositories with existing generic self-hosted Linux jobs:
+  `robinhood`, `validation`, `despatch`, and `envoy_utils`. After runner ID 11
+  was removed, the
+  [Robinhood routing check](https://github.com/gtvfx-envoy/robinhood/actions/runs/37145696049)
+  ran on `gha-linux-01` in `trusted-ci` and passed all CI and cleanup steps.
 
 ## Resolved cache observation
 
@@ -132,14 +146,15 @@ narrow root-owned provisioning command retains passwordless sudo.
 
 ## Next actions
 
-1. Begin phase 3 with a read-only inventory of all organization Linux runners,
-   especially `ubuntuserver`: identify its host, repository access, workload
-   history, and any dependency on it.
-2. Use measured queueing and utilization to decide whether more than
-   `gha-linux-01` is currently needed. Do not create a fleet merely because
-   the template now supports one.
-3. If `ubuntuserver` is confirmed redundant, plan its explicit unregister and
-   shutdown as a separate approved change.
+1. Identify the exact `ubuntuserver` VM in Synology Virtual Machine Manager,
+   verify that it contains no data or services requiring preservation, and
+   plan its shutdown and deletion as a separate approved change.
+2. Consider pinning remaining generic self-hosted Linux workflow selectors to
+   the custom `debian-13` and `ci` labels so future generic runners cannot
+   receive those jobs accidentally.
+3. Use measured queueing and utilization to decide whether more than
+   `gha-linux-01` is needed. Do not create a fleet merely because the template
+   supports one.
 4. Define a lightweight update, health-check, and replacement procedure for
    `gha-linux-01` and template VM 104.
 5. If the cache post-job stall recurs, capture the live service journal and
