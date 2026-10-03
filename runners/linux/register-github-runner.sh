@@ -8,6 +8,7 @@ RUNNER_NAME="${RUNNER_NAME:-$(hostname --short)}"
 RUNNER_GROUP="${RUNNER_GROUP:-trusted-ci}"
 RUNNER_LABELS="${RUNNER_LABELS:-debian-13,ci}"
 RUNNER_WORK_DIRECTORY="${RUNNER_WORK_DIRECTORY:-_work}"
+RUNNER_DISABLE_DEFAULT_LABELS="${RUNNER_DISABLE_DEFAULT_LABELS:-0}"
 GITHUB_URL="${GITHUB_URL:-https://github.com/gtvfx-envoy}"
 
 if [[ $EUID -ne 0 ]]; then
@@ -26,7 +27,7 @@ if [[ -z $RUNNER_ROOT ]]; then
     RUNNER_ROOT="$runner_home/actions-runner"
 fi
 
-if [[ ! -x $RUNNER_ROOT/config.sh || ! -x $RUNNER_ROOT/svc.sh ]]; then
+if [[ ! -x $RUNNER_ROOT/config.sh ]]; then
     printf 'Install the GitHub Actions runner before registration.\n' >&2
     exit 1
 fi
@@ -38,21 +39,37 @@ if [[ -e $RUNNER_ROOT/.runner || -e $RUNNER_ROOT/.credentials || \
 fi
 
 if [[ -z ${RUNNER_TOKEN:-} ]]; then
-    printf 'Provide a short-lived GitHub registration token in RUNNER_TOKEN.\n' >&2
-    exit 1
+    if ! IFS= read -r RUNNER_TOKEN || [[ -z $RUNNER_TOKEN ]]; then
+        printf 'Provide a short-lived token through standard input or RUNNER_TOKEN.\n' >&2
+        exit 1
+    fi
+fi
+
+config_arguments=(
+    --unattended
+    --url "$GITHUB_URL"
+    --token "$RUNNER_TOKEN"
+    --name "$RUNNER_NAME"
+    --runnergroup "$RUNNER_GROUP"
+    --labels "$RUNNER_LABELS"
+    --work "$RUNNER_WORK_DIRECTORY"
+)
+
+if [[ $RUNNER_DISABLE_DEFAULT_LABELS == 1 ]]; then
+    config_arguments+=(--no-default-labels)
 fi
 
 printf 'Registering runner %s with %s...\n' "$RUNNER_NAME" "$GITHUB_URL"
-runuser -u "$RUNNER_USER" -- bash -c \
-    'cd "$1"; shift; exec ./config.sh "$@"' \
-    _ "$RUNNER_ROOT" --unattended \
-    --url "$GITHUB_URL" \
-    --token "$RUNNER_TOKEN" \
-    --name "$RUNNER_NAME" \
-    --runnergroup "$RUNNER_GROUP" \
-    --labels "$RUNNER_LABELS" \
-    --work "$RUNNER_WORK_DIRECTORY"
+(
+    cd "$RUNNER_ROOT"
+    runuser -u "$RUNNER_USER" -- ./config.sh "${config_arguments[@]}"
+)
 unset RUNNER_TOKEN
+
+if [[ ! -x $RUNNER_ROOT/svc.sh ]]; then
+    printf 'Registration completed without creating the service helper.\n' >&2
+    exit 1
+fi
 
 (
     cd "$RUNNER_ROOT"

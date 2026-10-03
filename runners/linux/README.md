@@ -92,12 +92,15 @@ sudo bash /opt/homelab-infrastructure/runners/linux/install-github-runner.sh
 ```
 
 Generate a short-lived organization registration token immediately before
-registration. Supply it only through the process environment; never save it in
-this repository, a template, shell profile, or command transcript:
+registration. Pipe it over SSH standard input so it is not saved in this
+repository, a template, shell profile, or command transcript:
 
 ```bash
-sudo env RUNNER_TOKEN='<short-lived-token>' \
-  bash /opt/homelab-infrastructure/runners/linux/register-github-runner.sh
+gh api --method POST \
+  orgs/gtvfx-envoy/actions/runners/registration-token \
+  --jq .token | \
+ssh <admin-host> \
+  'sudo bash /opt/homelab-infrastructure/runners/linux/register-github-runner.sh'
 ```
 
 Registration defaults to organization `gtvfx-envoy`, runner group
@@ -105,11 +108,18 @@ Registration defaults to organization `gtvfx-envoy`, runner group
 short hostname. Override the documented environment variables only when the
 new worker intentionally differs from this profile.
 
-Removal also requires a newly generated short-lived token:
+Set `RUNNER_DISABLE_DEFAULT_LABELS=1` for an isolated validation registration
+that should receive only its explicitly configured custom labels.
+
+Removal also requires a newly generated short-lived token, sent through the
+same channel:
 
 ```bash
-sudo env RUNNER_TOKEN='<short-lived-removal-token>' \
-  bash /opt/homelab-infrastructure/runners/linux/unregister-github-runner.sh
+gh api --method POST \
+  orgs/gtvfx-envoy/actions/runners/remove-token \
+  --jq .token | \
+ssh <admin-host> \
+  'sudo bash /opt/homelab-infrastructure/runners/linux/unregister-github-runner.sh'
 ```
 
 The registration scripts never print or persist the supplied token. GitHub's

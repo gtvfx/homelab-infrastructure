@@ -27,8 +27,10 @@ if [[ ! -e $RUNNER_ROOT/.runner ]]; then
 fi
 
 if [[ -z ${RUNNER_TOKEN:-} ]]; then
-    printf 'Provide a short-lived GitHub removal token in RUNNER_TOKEN.\n' >&2
-    exit 1
+    if ! IFS= read -r RUNNER_TOKEN || [[ -z $RUNNER_TOKEN ]]; then
+        printf 'Provide a short-lived token through standard input or RUNNER_TOKEN.\n' >&2
+        exit 1
+    fi
 fi
 
 if [[ -x $RUNNER_ROOT/svc.sh ]]; then
@@ -39,10 +41,11 @@ if [[ -x $RUNNER_ROOT/svc.sh ]]; then
     )
 fi
 
-runuser -u "$RUNNER_USER" -- bash -c \
-    'cd "$1"; shift; exec ./config.sh "$@"' \
-    _ "$RUNNER_ROOT" remove \
-    --token "$RUNNER_TOKEN"
+(
+    cd "$RUNNER_ROOT"
+    runuser -u "$RUNNER_USER" -- \
+        ./config.sh remove --token "$RUNNER_TOKEN"
+)
 unset RUNNER_TOKEN
 
 printf 'GitHub Actions runner service and registration removed.\n'
