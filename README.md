@@ -6,6 +6,11 @@ The repository starts with the Linux GitHub Actions runner build environment.
 Additional VM definitions, cloud-init configuration, and services can be added
 as they are converted from validated manual procedures.
 
+## Current status
+
+Read [`STATUS.md`](STATUS.md) before continuing active work. It records the
+last verified live state, completed evidence, known problems, and next actions.
+
 ## Security boundaries
 
 This repository is public. Never commit:
