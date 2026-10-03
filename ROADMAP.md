@@ -83,10 +83,10 @@ template. Define capacity, labels, runner groups, repository access,
 concurrency, update policy, health checks, replacement procedure, and workload
 placement using measured demand.
 
-The initial phase-3 decision is to consolidate current Linux CI on
-`gha-linux-01` and retire the older `ubuntuserver` VM from the Synology
-DS923+. Additional workers are not required unless workload measurements show
-that one active runner is insufficient.
+The initial phase-3 decision consolidated current Linux CI on `gha-linux-01`.
+The older `ubuntuserver` registration and its VM on the Synology DS923+ were
+deleted. Additional workers are not required unless workload measurements
+show that one active runner is insufficient.
 
 ### 4. Reusable Windows GitHub Actions runner template
 

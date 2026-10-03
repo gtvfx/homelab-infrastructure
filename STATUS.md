@@ -16,9 +16,8 @@ The immediate planning objective is phase 3: determine the required Linux
 runner fleet from measured demand before creating or retaining additional
 workers.
 
-The current decision is to consolidate Linux CI on `gha-linux-01` and retire
-the older `ubuntuserver` VM from the Synology DS923+. Its GitHub runner
-registration has been removed; the VM itself has not yet been shut down or
+Linux CI is now consolidated on `gha-linux-01`. The older `ubuntuserver`
+GitHub runner registration and its VM on the Synology DS923+ have both been
 deleted.
 
 The earlier Ubuntu-on-`pve02` proposal is superseded. No separate runner on
@@ -48,6 +47,8 @@ As of the last verification:
   2026-10-03 after its Linux workflow repositories were granted access to
   `trusted-ci`. The organization runner inventory now contains only
   `gha-linux-01` and the Windows runner `MINI-PC`.
+- The associated `ubuntuserver` VM was subsequently deleted from the Synology
+  DS923+. It was the final VM running on that NAS.
 
 ## Proxmox node access
 
@@ -112,6 +113,8 @@ The following evidence confirms the runner can execute the intended workloads:
   was removed, the
   [Robinhood routing check](https://github.com/gtvfx-envoy/robinhood/actions/runs/37145696049)
   ran on `gha-linux-01` in `trusted-ci` and passed all CI and cleanup steps.
+- The retired `ubuntuserver` VM was then deleted from Synology Virtual Machine
+  Manager, completing removal of the final VM workload from the DS923+.
 
 ## Resolved cache observation
 
@@ -146,18 +149,15 @@ narrow root-owned provisioning command retains passwordless sudo.
 
 ## Next actions
 
-1. Identify the exact `ubuntuserver` VM in Synology Virtual Machine Manager,
-   verify that it contains no data or services requiring preservation, and
-   plan its shutdown and deletion as a separate approved change.
-2. Consider pinning remaining generic self-hosted Linux workflow selectors to
+1. Consider pinning remaining generic self-hosted Linux workflow selectors to
    the custom `debian-13` and `ci` labels so future generic runners cannot
    receive those jobs accidentally.
-3. Use measured queueing and utilization to decide whether more than
+2. Use measured queueing and utilization to decide whether more than
    `gha-linux-01` is needed. Do not create a fleet merely because the template
    supports one.
-4. Define a lightweight update, health-check, and replacement procedure for
+3. Define a lightweight update, health-check, and replacement procedure for
    `gha-linux-01` and template VM 104.
-5. If the cache post-job stall recurs, capture the live service journal and
+4. If the cache post-job stall recurs, capture the live service journal and
    runner diagnostics before restarting anything.
 
 ## Continuity protocol
