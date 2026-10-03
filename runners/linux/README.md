@@ -126,6 +126,31 @@ The registration scripts never print or persist the supplied token. GitHub's
 runner configuration stores its own credentials under the runner account after
 successful registration; those files must never be copied into a template.
 
+## Finalize administrative access
+
+Cloud-init grants its initial administrative account unrestricted passwordless
+sudo so unattended provisioning and registration can complete. Do not retain
+that temporary policy on a production runner.
+
+Set the `labadmin` password interactively so it is never stored in automation:
+
+```bash
+sudo passwd labadmin
+```
+
+Then run the guarded finalizer:
+
+```bash
+sudo env CONFIRM_ADMIN_HARDENING=yes \
+  bash /opt/homelab-infrastructure/runners/linux/finalize-admin-security.sh
+```
+
+[`finalize-admin-security.sh`](finalize-admin-security.sh) verifies that the
+account has a password, remains in the sudo group, SSH password authentication
+is disabled, and the narrow build-tool rule is valid. It then removes only
+cloud-init's temporary `NOPASSWD:ALL` file and validates the complete sudo
+policy, restoring the file automatically if validation fails.
+
 ## Optional remote maintenance
 
 The example policy in
