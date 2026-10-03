@@ -4,13 +4,13 @@ Last verified: 2026-10-03 (America/New_York)
 
 This file is the durable handoff for active homelab work. Verify mutable
 external state before acting, but do not reconstruct the project solely from
-chat history.
+chat history. See [`ROADMAP.md`](ROADMAP.md) for the overall project direction.
 
 ## Active objective
 
-Turn the validated `pve04` Linux GitHub Actions runner into a reproducible,
-secure runner lifecycle that can be used to provision fresh workers and,
-eventually, a clean Proxmox template.
+Complete roadmap phase 2: turn the validated `pve04` Linux GitHub Actions
+runner into a reproducible, secure runner lifecycle that can provision fresh
+workers and, eventually, a clean Proxmox template.
 
 ## Live runner state
 
@@ -113,11 +113,12 @@ lifecycle has been exercised end to end.
 
 At the start of future homelab sessions:
 
-1. Read this file and the relevant component README.
+1. Read this file, [`ROADMAP.md`](ROADMAP.md), and the relevant component
+   README.
 2. Inspect recent commits and current GitHub Actions state.
 3. Verify mutable live facts such as runner status before relying on this
    snapshot.
 
-Before ending a session that materially changes the homelab, update this file
+After each material milestone and before ending a session, update this file
 with completed evidence, unresolved problems, and the single most useful next
 action.

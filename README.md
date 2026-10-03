@@ -6,6 +6,11 @@ The repository starts with the Linux GitHub Actions runner build environment.
 Additional VM definitions, cloud-init configuration, and services can be added
 as they are converted from validated manual procedures.
 
+## Project direction
+
+Read [`ROADMAP.md`](ROADMAP.md) for the long-term vision, operating
+principles, phased infrastructure plan, and completion criteria.
+
 ## Current status
 
 Read [`STATUS.md`](STATUS.md) before continuing active work. It records the
@@ -34,6 +39,7 @@ the native compiler toolchain and prepares Python 3.11.9 for compatibility with
 
 ## Proxmox nodes
 
-Common host configuration is documented under [`nodes/common`](nodes/common/README.md).
-The initial policy enables key-only SSH administration while retaining
-key-based root access for Proxmox maintenance.
+Common host configuration is documented under
+[`nodes/common`](nodes/common/README.md). The initial policy enables key-only
+SSH administration while retaining key-based root access for Proxmox
+maintenance.
