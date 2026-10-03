@@ -51,16 +51,19 @@ if [[ ! -x $uv_binary ]] || ! "$uv_binary" --version | grep -Fq "$UV_VERSION"; t
         HOME="$runner_home" \
         UV_INSTALL_DIR="$uv_install_directory" \
         UV_NO_MODIFY_PATH=1 \
-        bash -c "curl -LsSf https://astral.sh/uv/$UV_VERSION/install.sh | sh"
+        bash -c \
+        "cd \"\$HOME\" && curl -LsSf https://astral.sh/uv/$UV_VERSION/install.sh | sh"
 fi
 
 printf 'Installing Python %s for %s...\n' "$PYTHON_VERSION" "$RUNNER_USER"
 runuser -u "$RUNNER_USER" -- env HOME="$runner_home" \
-    "$uv_binary" python install "$PYTHON_VERSION"
+    bash -c 'cd "$HOME" && exec "$1" python install "$2"' \
+    _ "$uv_binary" "$PYTHON_VERSION"
 
 python_executable="$(
     runuser -u "$RUNNER_USER" -- env HOME="$runner_home" \
-        "$uv_binary" python find "$PYTHON_VERSION"
+        bash -c 'cd "$HOME" && exec "$1" python find "$2"' \
+        _ "$uv_binary" "$PYTHON_VERSION"
 )"
 python_prefix="$(dirname "$(dirname "$python_executable")")"
 
