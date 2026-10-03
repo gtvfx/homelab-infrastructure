@@ -25,6 +25,21 @@ As of the last verification:
 - The validated VM profile is Debian 13 with 4 vCPUs, 8 GiB fixed memory, and
   a 120 GiB SCSI system disk.
 
+## Proxmox node access
+
+Key-only, non-interactive root SSH access was verified from the Codex host to
+all four nodes on 2026-10-03:
+
+- `pve01`: Proxmox VE 9.2.11, kernel 7.0.14-14-pve
+- `pve02`: Proxmox VE 9.2.11, kernel 7.0.14-14-pve
+- `pve03`: Proxmox VE 9.2.11, kernel 7.0.14-14-pve
+- `pve04`: Proxmox VE 9.2.21, kernel 7.0.14-20-pve
+
+Connection addresses and private key material are intentionally excluded from
+this public repository. The bare node names are not currently resolvable from
+the Windows Codex host, so local SSH aliases or the protected connection map
+must be used.
+
 ## Completed validation
 
 The following evidence confirms the runner can execute the intended workloads:
