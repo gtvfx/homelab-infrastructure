@@ -30,6 +30,7 @@ if [[ -z $RUNNER_TOOL_CACHE ]]; then
 fi
 
 uv_install_directory="$runner_home/.local/bin"
+uv_data_directory="$runner_home/.local/share"
 uv_binary="$uv_install_directory/uv"
 python_minor="${PYTHON_VERSION%.*}"
 python_cache_directory="$RUNNER_TOOL_CACHE/Python/$PYTHON_VERSION"
@@ -43,7 +44,10 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ca-certificates \
     curl
 
-install -d -o "$RUNNER_USER" -g "$runner_group" "$uv_install_directory"
+install -d -o "$RUNNER_USER" -g "$runner_group" \
+    "$runner_home/.local" \
+    "$uv_install_directory" \
+    "$uv_data_directory"
 
 if [[ ! -x $uv_binary ]] || ! "$uv_binary" --version | grep -Fq "$UV_VERSION"; then
     printf 'Installing uv %s for %s...\n' "$UV_VERSION" "$RUNNER_USER"

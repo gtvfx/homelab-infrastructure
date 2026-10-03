@@ -40,6 +40,22 @@ The script:
 Versions and paths can be overridden with environment variables documented at
 the top of the script.
 
+## Bootstrap a fresh host
+
+Run [`bootstrap-runner-host.sh`](bootstrap-runner-host.sh) as root on a fresh
+Debian cloud-image clone. It:
+
+1. Installs Git and other bootstrap prerequisites.
+2. Creates the locked, unprivileged `runner` service account.
+3. Maintains a root-owned checkout at `/opt/homelab-infrastructure`.
+4. Installs and validates the narrow provisioning sudo rule.
+5. Runs the build-tool provisioner.
+
+The cloud-image administrative account may temporarily use passwordless sudo
+for unattended bootstrap. Establish the intended long-term administrative
+authentication and sudo policy before treating a clone as production-ready.
+The bootstrap does not download or register a GitHub Actions runner.
+
 ## Optional remote maintenance
 
 The example policy in
