@@ -25,22 +25,19 @@ The earlier Ubuntu-on-`pve02` proposal is superseded. No separate runner on
 `pve02` is currently required; revisit that option only in response to
 measured capacity, redundancy, compatibility, or isolation needs.
 
-The workflow-label audit is complete. Twenty static Linux jobs in five
-repositories have reviewable PRs that require the `debian-13` and `ci` labels;
-`devtools` was already pinned correctly. The runner operations objective is
-also implemented locally with a read-only health check and maintenance,
-incident, and blue/green replacement guidance.
+The workflow-label migration is complete. Twenty static Linux jobs across five
+repositories now require the `debian-13` and `ci` labels; `devtools` was
+already pinned correctly. Six static self-hosted Windows jobs in `envoy` and
+`despatch` now require `windows-11` and `ci`. All five migration PRs are merged,
+their post-merge `main` workflows passed, and GitHub removed their source
+branches. The stale Python and packaging assumptions exposed in `validation`
+were repaired before its PR merged. Linux jobs route to `gha-linux-01`, and the
+representative Windows suites ran successfully on WINLAB.
 
-Initial PR execution confirms the new labels route Linux jobs to
-`gha-linux-01`. The `robinhood` and `envoy_utils` PRs are fully green. Six
-static self-hosted Windows jobs in `envoy` and `despatch` now also require
-`windows-11` and `ci`. The updated `envoy` and `despatch` PRs are fully green;
-their Windows suites ran on WINLAB and passed. The `validation` PR has two workflow
-failures requiring separate repair: `actions/setup-python` cannot supply
-Python 3.14 for Debian 13, and its Pytest bootstrap expects packaging metadata
-that no longer exists under `gt-globals/py`. The latest pre-migration Pytest
-run on `main` was already failing, so that bootstrap issue was not introduced
-by runner-label pinning.
+The runner operations objective is also implemented with a read-only health
+check and maintenance, incident, and blue/green replacement guidance. This
+closes the runner migration and validation task; further runner capacity
+should be driven by measured demand.
 
 ## Live runner state
 
@@ -306,6 +303,15 @@ The following evidence confirms the runner can execute the intended workloads:
   version `2.337.0` was readable, both checked filesystems were 5% full, no
   reboot was required, and the complete result contained zero failures and
   zero warnings.
+- The runner-label migrations merged through
+  [Envoy PR #42](https://github.com/gtvfx-envoy/envoy/pull/42),
+  [Robinhood PR #2](https://github.com/gtvfx-envoy/robinhood/pull/2),
+  [Validation PR #3](https://github.com/gtvfx-envoy/validation/pull/3),
+  [Despatch PR #20](https://github.com/gtvfx-envoy/despatch/pull/20), and
+  [Envoy Utils PR #14](https://github.com/gtvfx-envoy/envoy_utils/pull/14).
+  Their merge commits each triggered successful `main` workflows. Validation's
+  repaired Lint, Pytest, and Deploy Docs workflows all passed, closing the two
+  pre-existing compatibility failures found during the migration.
 
 ## Resolved cache observation
 
@@ -345,22 +351,12 @@ narrow root-owned provisioning command retains passwordless sudo.
 1. Review the initial Windows workstation package baseline in normal use and
    add utilities only when a concrete need emerges. Keep Copilot and other
    interactive authentication outside the public configuration.
-2. Review the runner-label hardening PRs for
-   [`envoy`](https://github.com/gtvfx-envoy/envoy/pull/42),
-   [`robinhood`](https://github.com/gtvfx-envoy/robinhood/pull/2),
-   [`validation`](https://github.com/gtvfx-envoy/validation/pull/3),
-   [`despatch`](https://github.com/gtvfx-envoy/despatch/pull/20), and
-   [`envoy_utils`](https://github.com/gtvfx-envoy/envoy_utils/pull/14). Merge
-   only after their required checks pass and confirm representative Linux jobs
-   name `gha-linux-01` and Windows jobs name `WINLAB`. Repair the two stale
-   `validation` workflow assumptions without weakening its intended
-   compatibility coverage.
-3. Use measured queueing and utilization to decide whether more than
+2. Use measured queueing and utilization to decide whether more than
    `gha-linux-01` is needed. Do not create a fleet merely because the template
    supports one.
-4. Exercise the documented update procedure during the next intentional
+3. Exercise the documented update procedure during the next intentional
    maintenance window; do not create work solely to test package upgrades.
-5. If the cache post-job stall recurs, follow the incident-capture runbook and
+4. If the cache post-job stall recurs, follow the incident-capture runbook and
    capture the live service journal and
    runner diagnostics before restarting anything.
 
