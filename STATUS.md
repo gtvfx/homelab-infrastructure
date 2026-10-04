@@ -175,6 +175,29 @@ confirmed that key authentication succeeds, a no-key connection is rejected,
 stable-name resolution works, and WinGet is available in the administrator's
 user context. The QEMU guest agent remains an independent recovery channel.
 
+The first WinGet Configuration v3 baseline was authored and applied on
+2026-10-04 using native DSC v3 resources. It manages a deliberately limited
+package set rather than all installed applications. The applied versions were:
+
+- PowerShell `7.6.6`;
+- Windows Terminal `1.25.2733.0`;
+- Git for Windows `2.55.0.windows.5`;
+- GitHub Copilot CLI `1.0.91`;
+- x64 and x86 Visual C++ v14 redistributables `14.51.36247.0`; and
+- .NET SDK `10.0.401`.
+
+The post-apply DSC test reported all seven resources in the desired state with
+no errors or differing properties. Fresh-session commands confirmed PowerShell,
+Git, Copilot CLI, and .NET are available. Copilot authentication remains a
+manual per-user action and is not stored in infrastructure configuration.
+
+WinGet `1.29.380` installed the DSC `3.2.3` processor successfully. Its
+`winget configure validate` subcommand incorrectly rejected native v3 WinGet
+resources, including a document exported by WinGet itself. Direct
+`dsc config test` and `dsc config set` used the installed public resource and
+completed successfully, so those commands are the documented workflow until
+the WinGet validator is corrected.
+
 ## Completed validation
 
 The following evidence confirms the runner can execute the intended workloads:
@@ -259,9 +282,9 @@ narrow root-owned provisioning command retains passwordless sudo.
 
 ## Next actions
 
-1. Add a reviewed WinGet Configuration baseline for the Windows workstation,
-   covering core utilities and deliberately selected runtime versions. Keep
-   authentication and machine-private values out of the public repository.
+1. Review the initial Windows workstation package baseline in normal use and
+   add utilities only when a concrete need emerges. Keep Copilot and other
+   interactive authentication outside the public configuration.
 2. Consider pinning remaining generic self-hosted Linux workflow selectors to
    the custom `debian-13` and `ci` labels so future generic runners cannot
    receive those jobs accidentally.

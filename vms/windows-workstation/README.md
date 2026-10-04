@@ -86,6 +86,42 @@ reviewed upgrades instead of an unattended blanket upgrade. Puppet is deferred
 until the Windows fleet or drift-remediation requirements justify its server,
 agent, certificate, catalog, and module lifecycle.
 
+The initial v3 configuration is [`configuration.winget`](configuration.winget).
+It manages the latest release within this reviewed package set:
+
+- PowerShell 7;
+- Windows Terminal;
+- Git for Windows;
+- GitHub Copilot CLI;
+- x64 and x86 Visual C++ v14 redistributables; and
+- the .NET 10 SDK, which includes the matching runtime.
+
+The explicit .NET major version prevents a future major release from entering
+the baseline automatically. Copilot authentication remains an interactive,
+per-user step and is not represented in the configuration.
+
+Review the file before every application, then test it before allowing changes:
+
+```powershell
+dsc config test --file .\configuration.winget
+dsc config set --file .\configuration.winget
+```
+
+Reapplying the configuration updates only its declared packages. It does not
+replace Windows Update and does not perform a blanket upgrade of other
+applications.
+
+WinGet `1.29.380` incorrectly reported its native `Microsoft.WinGet/Package`
+resource as unavailable when running `winget configure validate`, including
+for a v3 document exported by WinGet itself. The underlying DSC v3 resource is
+installed, publicly discoverable, and exposes a valid schema, so use the native
+DSC `test` and `set` commands above until the WinGet validator is corrected.
+
+The baseline was first applied on 2026-10-04. A second `dsc config test`
+reported all seven resources in the desired state with no errors or differing
+properties. Executable checks from a fresh SSH session confirmed PowerShell
+`7.6.6`, Git `2.55.0.windows.5`, Copilot CLI `1.0.91`, and .NET SDK `10.0.401`.
+
 After installation:
 
 1. Confirm Device Manager has no unexpected devices.
