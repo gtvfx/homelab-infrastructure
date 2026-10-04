@@ -32,9 +32,10 @@ also implemented locally with a read-only health check and maintenance,
 incident, and blue/green replacement guidance.
 
 Initial PR execution confirms the new labels route Linux jobs to
-`gha-linux-01`. The `robinhood` and `envoy_utils` PRs are fully green. Linux
-jobs in `envoy` and `despatch` passed, while one Windows job in each remains
-queued because `MINI-PC` is offline. The `validation` PR has two workflow
+`gha-linux-01`. The `robinhood` and `envoy_utils` PRs are fully green. Six
+static self-hosted Windows jobs in `envoy` and `despatch` now also require
+`windows-11` and `ci`. The updated `envoy` and `despatch` PRs are fully green;
+their Windows suites ran on WINLAB and passed. The `validation` PR has two workflow
 failures requiring separate repair: `actions/setup-python` cannot supply
 Python 3.14 for Debian 13, and its Pytest bootstrap expects packaging metadata
 that no longer exists under `gt-globals/py`. The latest pre-migration Pytest
@@ -45,7 +46,7 @@ by runner-label pinning.
 
 As of the last verification:
 
-- `gha-linux-01` is online and idle.
+- `gha-linux-01` is online; its busy state varies with queued CI work.
 - GitHub Actions runner version: `2.337.0`.
 - Organization runner group: `trusted-ci`.
 - Labels: `self-hosted`, `Linux`, `X64`, `debian-13`, and `ci`.
@@ -53,6 +54,33 @@ As of the last verification:
   `gtvfx-envoy/devtools`, `gtvfx-envoy/robinhood`,
   `gtvfx-envoy/validation`, `gtvfx-envoy/despatch`, and
   `gtvfx-envoy/envoy_utils`.
+- `WINLAB`, runner ID 21, is online in `trusted-ci` with labels `self-hosted`,
+  `Windows`, `X64`, `windows-11`, and `ci`.
+- WINLAB runs GitHub Actions runner `2.337.0` from `C:\actions-runner` as the
+  automatic `actions.runner.gtvfx-envoy.WINLAB` service under
+  `NT AUTHORITY\NETWORK SERVICE`.
+- WINLAB's machine-wide PowerShell execution policy is `RemoteSigned`, required
+  for the setup scripts used by Windows Actions jobs.
+- Python 3.11.9 is pre-provisioned in WINLAB's runner tool cache from the
+  checksum-verified official `actions/python-versions` archive. The runner
+  service remains non-administrative and does not perform dynamic installs.
+- PowerShell 7.6.6 is installed machine-wide from its checksum-verified
+  official MSI so the non-interactive runner service can resolve `pwsh`.
+- Visual Studio Build Tools 2022 version 17.14.41 is installed with the
+  recommended C++ workload; the x64 MSVC compiler and `vcvarsall.bat` were
+  verified before the runner returned online.
+- The machine PATH exposes the installed PowerShell and Git Bash directories
+  to composite actions running under the service identity.
+- Despatch's four pinned Envoy bundles are staged in a read-only local cache at
+  `C:\ci\envoy\bndl`; its repository variable points there. No NAS credential
+  is stored for the runner service.
+- [Envoy Lint run 37212153323](https://github.com/gtvfx-envoy/envoy/actions/runs/37212153323)
+  passed its complete Windows x64 suite on WINLAB, including MSVC and Rust
+  validation, native and PyO3 tests, wheel construction and installation, and
+  cache cleanup.
+- [Despatch Lint run 37212154643](https://github.com/gtvfx-envoy/despatch/actions/runs/37212154643)
+  passed its Windows tests and Ruff checks on WINLAB using the local bundle
+  cache.
 - The validated VM profile is Debian 13 with 4 vCPUs, 8 GiB fixed memory, and
   a 120 GiB SCSI system disk.
 - Proxmox VM 104, `debian13-gha-runner-template`, is a stopped, unregistered
@@ -62,10 +90,12 @@ As of the last verification:
   and template VM 104. The `pve04-nvme` thin pool was 1.57% allocated.
 - GitHub runner ID 11, `ubuntuserver`, was removed from the organization on
   2026-10-03 after its Linux workflow repositories were granted access to
-  `trusted-ci`. The organization runner inventory now contains only
-  `gha-linux-01` and the Windows runner `MINI-PC`.
+  `trusted-ci`.
 - The associated `ubuntuserver` VM was subsequently deleted from the Synology
   DS923+. It was the final VM running on that NAS.
+- The stale offline `MINI-PC` runner, ID 17, represented the physical computer
+  that became `pve05`. It was removed from the organization on 2026-10-04 only
+  after WINLAB registered successfully and came online.
 
 ## Proxmox node access
 
@@ -322,10 +352,9 @@ narrow root-owned provisioning command retains passwordless sudo.
    [`despatch`](https://github.com/gtvfx-envoy/despatch/pull/20), and
    [`envoy_utils`](https://github.com/gtvfx-envoy/envoy_utils/pull/14). Merge
    only after their required checks pass and confirm representative Linux jobs
-   name `gha-linux-01`. Repair the two stale `validation` workflow assumptions
-   without weakening its intended compatibility coverage. The queued Windows
-   checks can complete when `MINI-PC` is intentionally online; do not power it
-   on solely to make this administrative change green.
+   name `gha-linux-01` and Windows jobs name `WINLAB`. Repair the two stale
+   `validation` workflow assumptions without weakening its intended
+   compatibility coverage.
 3. Use measured queueing and utilization to decide whether more than
    `gha-linux-01` is needed. Do not create a fleet merely because the template
    supports one.

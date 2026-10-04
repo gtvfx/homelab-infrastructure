@@ -1,7 +1,8 @@
 # Windows 11 lab workstation
 
 VM 105, `win11-lab-workstation`, is a dedicated interactive sandbox on
-`pve05`. It is separate from `win-jump` and from all CI runners.
+`pve05`. It is separate from `win-jump` and also provides the homelab's
+current trusted Windows CI capacity.
 
 ## VM profile
 
@@ -121,6 +122,53 @@ The baseline was first applied on 2026-10-04. A second `dsc config test`
 reported all seven resources in the desired state with no errors or differing
 properties. Executable checks from a fresh SSH session confirmed PowerShell
 `7.6.6`, Git `2.55.0.windows.5`, Copilot CLI `1.0.91`, and .NET SDK `10.0.401`.
+
+## GitHub Actions runner
+
+WINLAB replaced the retired bare-metal `MINI-PC` organization runner on
+2026-10-04. GitHub Actions runner `2.337.0` is installed under
+`C:\actions-runner` and registered as `WINLAB` in the `trusted-ci` runner
+group. Its labels are `self-hosted`, `Windows`, `X64`, `windows-11`, and `ci`.
+
+The generated `actions.runner.gtvfx-envoy.WINLAB` Windows service starts
+automatically under `NT AUTHORITY\NETWORK SERVICE`; it does not use the
+interactive RDP administrator's identity or profile. The machine-wide
+PowerShell execution policy is `RemoteSigned`, which permits the local setup
+scripts used by GitHub Actions while continuing to block unsigned scripts that
+retain a downloaded-file mark.
+
+Python 3.11.9 is pre-provisioned in the runner tool cache from the official
+`actions/python-versions` archive with its published checksum verified. This
+allows `actions/setup-python` to select the required interpreter without
+granting the runner service administrative privileges for dynamic installs.
+PowerShell `7.6.6` is also installed machine-wide from the checksum-verified
+official MSI so `pwsh` is available to the service; the interactive WinGet
+package alone exposed only a user-profile WindowsApps shim.
+Visual Studio Build Tools 2022 `17.14.41` supplies the recommended C++ build
+workload. The x64 compiler and `vcvarsall.bat` were verified before the runner
+service returned to production.
+The machine PATH includes the machine-wide PowerShell and Git Bash directories
+because composite actions resolve their shells from the runner service's
+startup environment rather than an interactive user's profile.
+
+Despatch's four pinned Envoy bundles are staged in a read-only local CI cache
+under `C:\ci\envoy\bndl`. Its `ENVOY_STUDIO_BNDLS` repository variable points
+to that cache. This avoids granting the service an interactive user's SMB
+credentials or making CI availability depend on a mapped network share. Treat
+the cache as replaceable input and refresh it deliberately when the Stack's
+bundle pins change.
+
+The runner archive was downloaded from the official `actions/runner` release
+and verified against its GitHub-published SHA-256 digest before extraction.
+The short-lived organization registration token was piped directly into the
+remote registration process and is not stored in this repository.
+
+This is an intentional shared-role VM, so a trusted workflow can affect the
+same operating system used as the interactive sandbox. Keep repository access
+restricted through `trusted-ci`, require the `windows-11` and `ci` labels on
+static self-hosted Windows jobs, and do not expose the runner to unreviewed
+fork code. The pre-runner baseline snapshot and full backup remain the clean
+recovery boundary.
 
 After installation:
 

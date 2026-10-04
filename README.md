@@ -47,6 +47,6 @@ maintenance.
 
 ## Windows lab workstation
 
-The dedicated Windows 11 sandbox on `pve05`, including its VM profile and
-physical USB port map, is documented under
+The Windows 11 sandbox and trusted Windows CI runner on `pve05`, including its
+VM profile, service boundary, and physical USB port map, is documented under
 [`vms/windows-workstation`](vms/windows-workstation/README.md).

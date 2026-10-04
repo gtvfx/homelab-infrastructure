@@ -94,10 +94,10 @@ show that one active runner is insufficient.
 **State:** Operational on `pve05`; clean baseline captured on 2026-10-04.
 
 Create a dedicated Windows 11 Pro sandbox and interactive workstation that is
-separate from both CI runners and the isolated `win-jump` work VM. The initial
-profile is 8 vCPUs, 24 GiB fixed memory, a 256 GiB thin-provisioned system
-disk, Q35, OVMF with Microsoft keys, virtual TPM 2.0, VirtIO storage and
-networking, and the QEMU guest agent.
+separate from the isolated `win-jump` work VM. The initial profile is 8 vCPUs,
+24 GiB fixed memory, a 256 GiB thin-provisioned system disk, Q35, OVMF with
+Microsoft keys, virtual TPM 2.0, VirtIO storage and networking, and the QEMU
+guest agent.
 
 Use RDP from trusted LAN or VPN paths as the primary interface. Start without
 GPU passthrough. Map required external USB ports or devices individually; do
@@ -117,6 +117,12 @@ Defer Puppet until multiple Windows systems or continuous drift correction make
 the additional server, agent, certificate, catalog, and module lifecycle
 worthwhile.
 
+WINLAB now also supplies trusted Windows CI capacity as an intentional
+shared-role compromise. Its runner uses a non-interactive service identity and
+purpose-specific labels. Retain the clean pre-runner snapshot and backup as
+the recovery boundary, and move CI to a dedicated image if workload trust,
+capacity, or isolation requirements outgrow this arrangement.
+
 ### 5. Reusable Windows GitHub Actions runner template
 
 **State:** Planned.
@@ -127,11 +133,16 @@ out of the template.
 
 ### 6. Windows runner fleet
 
-**State:** Planned after phase 5.
+**State:** Initial capacity operational on WINLAB; dedicated fleet deferred.
 
 Deploy and operate independently identifiable Windows workers with documented
 security boundaries, update policy, workload isolation, and replacement
 procedures.
+
+The first worker is the shared-role WINLAB VM rather than a clone of a reusable
+runner template. This does not complete phase 5. Use measured demand and risk
+to decide whether to build a dedicated Windows runner image and additional
+workers.
 
 ### 7. macOS GitHub Actions runner
 
