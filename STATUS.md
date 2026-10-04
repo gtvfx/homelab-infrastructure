@@ -14,9 +14,9 @@ registration, representative CI, unregister, and deletion.
 
 The runner planning objective remains phase 3: determine the required Linux
 runner fleet from measured demand before creating or retaining additional
-workers. Infrastructure expansion is also active: `pve05` is prepared for
-cluster admission and will host a dedicated Windows 11 lab workstation after
-joining the cluster.
+workers. Infrastructure expansion is also active: `pve05` is now the fifth
+member of the `homelab` cluster and will host a dedicated Windows 11 lab
+workstation.
 
 Linux CI is now consolidated on `gha-linux-01`. The older `ubuntuserver`
 GitHub runner registration and its VM on the Synology DS923+ have both been
@@ -66,22 +66,19 @@ all five nodes on 2026-10-03:
 Connection addresses and private key material are intentionally excluded from
 this public repository. Protected local SSH aliases for the original four
 nodes are configured on the Windows Codex host. Direct key-only access to
-`pve05` is verified; its local alias remains housekeeping rather than a
-cluster-join prerequisite.
+`pve05` is verified; adding its local alias remains housekeeping.
 
 ## `pve05` expansion
 
 `pve05` is a Dell OptiPlex Micro 7010 with an Intel Core i5-13500T, 64 GiB of
-memory, and a 1 TB NVMe device. It has no guests and remains a standalone
-Proxmox node; no cluster-join command has been run.
+memory, and a 1 TB NVMe device. It has no guests and joined the `homelab`
+cluster as node ID 5 on 2026-10-03.
 
 Cluster admission was explicitly authorized on 2026-10-03. The final
 preflight confirmed that the existing four-node cluster was healthy and
 quorate, both sides ran Proxmox VE `9.2.21` with kernel `7.0.14-20-pve`,
-`pve05` was still empty and standalone, its hostname resolved to its intended
+`pve05` was empty and standalone, its hostname resolved to its intended
 management address, and all four members were reachable without packet loss.
-The join is the active in-progress operation until post-join five-node quorum,
-services, networking, and local storage visibility are validated.
 
 Pre-join preparation was completed and validated on 2026-10-03:
 
@@ -98,10 +95,28 @@ Pre-join preparation was completed and validated on 2026-10-03:
   its expected address and default route; and
 - the existing four-node `homelab` cluster remained healthy and quorate.
 
-The only error-level current-boot journal entry was `blkmapd` reporting a
-missing NFS block-layout pipe. No NFS storage is configured on `pve05`, and
-the event did not affect node, storage, network, API, or Proxmox service
-health.
+The supported SSH-mode `pvecm add` workflow then completed successfully with
+`pve05`'s management address explicitly assigned to Corosync link 0.
+Post-join validation from both `pve04` and `pve05` confirmed:
+
+- cluster configuration version 5 with node IDs 1 through 5;
+- five expected and present votes, quorum 3, and a quorate state;
+- active Corosync, `pve-cluster`, API proxy, daemon, and status services;
+- no failed systemd units;
+- replicated cluster visibility of all five node directories; and
+- an active, empty 793.8 GiB `local-lvm` thin pool on `pve05` after extending
+  the existing storage definition to nodes `pve02`, `pve03`, and `pve05`.
+
+The shared Synology NFS storage remains active on existing nodes but inactive
+on `pve05`. The NAS export ACL explicitly contains only the original four node
+addresses, so the `pve05` management address must be added to the
+`/volume1/proxmox` NFS permissions before that storage will mount there. This
+does not affect cluster quorum or `pve05` local storage.
+
+Before the join, the only error-level current-boot journal entry was `blkmapd`
+reporting a missing NFS block-layout pipe. The event did not affect node,
+local storage, network, API, or Proxmox service health and is separate from
+the explicit Synology export ACL rejection observed after the join.
 
 The planned `win11-lab-workstation` VM is separate from `win-jump`. Use
 individual USB device or physical-port mappings instead of whole-controller
@@ -193,10 +208,10 @@ narrow root-owned provisioning command retains passwordless sudo.
 
 ## Next actions
 
-1. Review and explicitly approve admission of the prepared, empty `pve05`
-   node to the `homelab` cluster. Revalidate cluster quorum immediately before
-   and after the join.
-2. After the join, map `pve05`'s external USB port paths with a test device and
+1. Add `pve05`'s management address to the Synology
+   `/volume1/proxmox` NFS export permissions, then verify the `synology`
+   storage is active from `pve05`.
+2. Map `pve05`'s external USB port paths with a test device and
    build the separate `win11-lab-workstation` VM from the profile in the
    roadmap.
 3. Consider pinning remaining generic self-hosted Linux workflow selectors to

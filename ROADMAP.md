@@ -44,13 +44,12 @@ assumptions do not quietly remain active requirements.
 
 ### 1. Proxmox cluster and storage/network foundation
 
-**State:** Operational; five-node expansion is in progress.
+**State:** Operational as a five-node cluster, with ongoing hardening.
 
 Maintain the Proxmox environment, shared Synology-backed storage, networking,
 key-only administrative access, hardware inventory, recovery procedures, and
-safe storage-management practices. The original four-node cluster remains
-operational. `pve05` has completed standalone pre-join preparation and is the
-planned fifth member; admit it only after a final cluster-join review.
+safe storage-management practices. `pve05` joined the original four-node
+cluster on 2026-10-03 and was validated as the fifth voting member.
 
 ### 2. Reusable Linux GitHub Actions runner template
 
@@ -92,7 +91,7 @@ show that one active runner is insufficient.
 
 ### 4. Windows 11 lab workstation
 
-**State:** Planned on `pve05`; host pre-join preparation is complete.
+**State:** Planned on `pve05`; the host is now a cluster member.
 
 Create a dedicated Windows 11 Pro sandbox and interactive workstation that is
 separate from both CI runners and the isolated `win-jump` work VM. The initial
