@@ -44,3 +44,9 @@ Common host configuration is documented under
 [`nodes/common`](nodes/common/README.md). The initial policy enables key-only
 SSH administration while retaining key-based root access for Proxmox
 maintenance.
+
+## Windows lab workstation
+
+The dedicated Windows 11 sandbox on `pve05`, including its VM profile and
+physical USB port map, is documented under
+[`vms/windows-workstation`](vms/windows-workstation/README.md).

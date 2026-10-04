@@ -124,15 +124,25 @@ vCPUs, 24 GiB fixed memory, a 256 GiB thin-provisioned VirtIO SCSI disk, Q35,
 OVMF with Microsoft Secure Boot keys, TPM 2.0, a VirtIO NIC on `vmbr0`, and
 QEMU guest-agent support. The Windows 11 25H2 and VirtIO driver ISOs are
 attached from shared storage. The generated QEMU command validated, and the
-new volumes left `local-lvm` at 0.01% allocation. The VM has not been booted.
+new volumes left `local-lvm` at 0.01% allocation.
 
 Use individual USB device or physical-port mappings instead of
 whole-controller passthrough because `pve05` has one USB controller shared
 with its USB network adapter and internal Bluetooth. Dell documents six
 built-in external USB ports: two front USB 3.2 ports, two rear USB 3.2 ports,
 one rear USB 2.0 port, and one rear USB 2.0 Smart Power On port. Their stable
-Linux port paths still need to be mapped with a test device before final VM
-passthrough configuration.
+Linux port paths were mapped with a USB 3 flash drive and USB 2 mouse. Ten
+speed-specific port paths were attached to VM 105, covering both the USB 3 and
+USB 2 companion paths for each USB 3 connector while excluding internal
+Bluetooth. The unused Realtek USB Ethernet adapter was removed after
+confirming that `pve05` management and Corosync use the onboard NIC. Removing
+it did not affect connectivity or five-node quorum.
+
+VM 105 then started successfully, initialized its virtual TPM 2.0, and
+accepted the boot keystroke after a controlled reset. Runtime counters
+confirmed active reads from the Windows 11 ISO. The VM is currently running
+at the interactive Windows Setup stage; installation and guest configuration
+remain incomplete.
 
 ## Completed validation
 
@@ -218,8 +228,9 @@ narrow root-owned provisioning command retains passwordless sudo.
 
 ## Next actions
 
-1. Map `pve05`'s six external USB port paths with a test device, attach the
-   desired paths to powered-off VM 105, and complete Windows 11 installation.
+1. Complete Windows 11 installation in VM 105, install VirtIO and QEMU guest
+   agent drivers, enable RDP, and establish a clean baseline snapshot or
+   backup.
 2. Consider pinning remaining generic self-hosted Linux workflow selectors to
    the custom `debian-13` and `ci` labels so future generic runners cannot
    receive those jobs accidentally.
