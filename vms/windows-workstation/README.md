@@ -47,8 +47,11 @@ Windows 11 Pro installation and VirtIO guest-tools installation were completed
 on 2026-10-04. The QEMU guest agent reports successfully to Proxmox. RDP is
 enabled with Network Level Authentication and its Windows Firewall rules are
 restricted to the trusted LAN subnet. The endpoint is reachable from the Codex
-workstation; interactive sign-in validation, Windows updates, and the clean
-baseline remain pending.
+workstation; Windows updates and the clean baseline remain pending.
+
+Interactive RDP sign-in was subsequently validated with a password-protected
+local administrator account. The private account and host identifiers are not
+recorded in this public repository.
 
 After installation:
 

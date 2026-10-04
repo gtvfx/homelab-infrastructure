@@ -149,8 +149,10 @@ RDP is enabled with Network Level Authentication. Only the standard RDP
 TCP/UDP user-mode firewall rules are enabled, the active VirtIO network is
 classified as Private, and the rules are restricted to the trusted LAN
 subnet. TCP port 3389 was reachable from the Codex workstation and local name
-resolution identifies the guest; an interactive RDP sign-in is still required
-for end-to-end acceptance.
+resolution identifies the guest. An interactive RDP sign-in then succeeded
+using a password-protected local administrator account. Windows confirmed the
+account is enabled and belongs to both the local Administrators and Users
+groups.
 
 ## Completed validation
 
@@ -236,9 +238,9 @@ narrow root-owned provisioning command retains passwordless sudo.
 
 ## Next actions
 
-1. Validate an interactive RDP sign-in to VM 105, apply Windows updates,
-   normalize disk-only boot during a controlled stopped cycle, and establish
-   a clean baseline snapshot or backup.
+1. Apply Windows updates to VM 105, normalize disk-only boot during a
+   controlled stopped cycle, and establish a clean baseline snapshot or
+   backup.
 2. Consider pinning remaining generic self-hosted Linux workflow selectors to
    the custom `debian-13` and `ci` labels so future generic runners cannot
    receive those jobs accidentally.
