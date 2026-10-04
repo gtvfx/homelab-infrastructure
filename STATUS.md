@@ -31,6 +31,16 @@ repositories have reviewable PRs that require the `debian-13` and `ci` labels;
 also implemented locally with a read-only health check and maintenance,
 incident, and blue/green replacement guidance.
 
+Initial PR execution confirms the new labels route Linux jobs to
+`gha-linux-01`. The `robinhood` and `envoy_utils` PRs are fully green. Linux
+jobs in `envoy` and `despatch` passed, while one Windows job in each remains
+queued because `MINI-PC` is offline. The `validation` PR has two workflow
+failures requiring separate repair: `actions/setup-python` cannot supply
+Python 3.14 for Debian 13, and its Pytest bootstrap expects packaging metadata
+that no longer exists under `gt-globals/py`. The latest pre-migration Pytest
+run on `main` was already failing, so that bootstrap issue was not introduced
+by runner-label pinning.
+
 ## Live runner state
 
 As of the last verification:
@@ -312,7 +322,10 @@ narrow root-owned provisioning command retains passwordless sudo.
    [`despatch`](https://github.com/gtvfx-envoy/despatch/pull/20), and
    [`envoy_utils`](https://github.com/gtvfx-envoy/envoy_utils/pull/14). Merge
    only after their required checks pass and confirm representative Linux jobs
-   name `gha-linux-01`.
+   name `gha-linux-01`. Repair the two stale `validation` workflow assumptions
+   without weakening its intended compatibility coverage. The queued Windows
+   checks can complete when `MINI-PC` is intentionally online; do not power it
+   on solely to make this administrative change green.
 3. Use measured queueing and utilization to decide whether more than
    `gha-linux-01` is needed. Do not create a fleet merely because the template
    supports one.
