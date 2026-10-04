@@ -118,11 +118,21 @@ reporting a missing NFS block-layout pipe. The event did not affect node,
 local storage, network, API, or Proxmox service health and is separate from
 the explicit Synology export ACL rejection observed after the join.
 
-The planned `win11-lab-workstation` VM is separate from `win-jump`. Use
-individual USB device or physical-port mappings instead of whole-controller
-passthrough because `pve05` has one USB controller shared with its USB network
-adapter and internal Bluetooth. External physical ports still need to be
-mapped with a test device before final VM passthrough configuration.
+VM 105, `win11-lab-workstation`, was created on `pve05` as a powered-off VM
+shell separate from `win-jump`. Its validated configuration has 8 host-type
+vCPUs, 24 GiB fixed memory, a 256 GiB thin-provisioned VirtIO SCSI disk, Q35,
+OVMF with Microsoft Secure Boot keys, TPM 2.0, a VirtIO NIC on `vmbr0`, and
+QEMU guest-agent support. The Windows 11 25H2 and VirtIO driver ISOs are
+attached from shared storage. The generated QEMU command validated, and the
+new volumes left `local-lvm` at 0.01% allocation. The VM has not been booted.
+
+Use individual USB device or physical-port mappings instead of
+whole-controller passthrough because `pve05` has one USB controller shared
+with its USB network adapter and internal Bluetooth. Dell documents six
+built-in external USB ports: two front USB 3.2 ports, two rear USB 3.2 ports,
+one rear USB 2.0 port, and one rear USB 2.0 Smart Power On port. Their stable
+Linux port paths still need to be mapped with a test device before final VM
+passthrough configuration.
 
 ## Completed validation
 
@@ -208,9 +218,8 @@ narrow root-owned provisioning command retains passwordless sudo.
 
 ## Next actions
 
-1. Map `pve05`'s external USB port paths with a test device and
-   build the separate `win11-lab-workstation` VM from the profile in the
-   roadmap.
+1. Map `pve05`'s six external USB port paths with a test device, attach the
+   desired paths to powered-off VM 105, and complete Windows 11 installation.
 2. Consider pinning remaining generic self-hosted Linux workflow selectors to
    the custom `debian-13` and `ci` labels so future generic runners cannot
    receive those jobs accidentally.

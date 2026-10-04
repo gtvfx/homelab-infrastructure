@@ -91,7 +91,7 @@ show that one active runner is insufficient.
 
 ### 4. Windows 11 lab workstation
 
-**State:** Planned on `pve05`; the host is now a cluster member.
+**State:** Implementation started on `pve05`; VM shell created, installation pending.
 
 Create a dedicated Windows 11 Pro sandbox and interactive workstation that is
 separate from both CI runners and the isolated `win-jump` work VM. The initial
