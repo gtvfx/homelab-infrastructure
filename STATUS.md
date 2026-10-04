@@ -198,6 +198,12 @@ resources, including a document exported by WinGet itself. Direct
 completed successfully, so those commands are the documented workflow until
 the WinGet validator is corrected.
 
+A clean checkout of the public infrastructure repository now exists on the
+workstation. The temporary transferred configuration was removed only after a
+line-ending-normalized comparison matched the committed file. The final test
+from checkout commit `700fcb7` reported seven resources, zero errors, and zero
+drift.
+
 ## Completed validation
 
 The following evidence confirms the runner can execute the intended workloads:
