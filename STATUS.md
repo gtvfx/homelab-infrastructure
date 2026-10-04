@@ -75,6 +75,14 @@ cluster-join prerequisite.
 memory, and a 1 TB NVMe device. It has no guests and remains a standalone
 Proxmox node; no cluster-join command has been run.
 
+Cluster admission was explicitly authorized on 2026-10-03. The final
+preflight confirmed that the existing four-node cluster was healthy and
+quorate, both sides ran Proxmox VE `9.2.21` with kernel `7.0.14-20-pve`,
+`pve05` was still empty and standalone, its hostname resolved to its intended
+management address, and all four members were reachable without packet loss.
+The join is the active in-progress operation until post-join five-node quorum,
+services, networking, and local storage visibility are validated.
+
 Pre-join preparation was completed and validated on 2026-10-03:
 
 - the timezone was corrected to `America/New_York`, with NTP synchronized;
