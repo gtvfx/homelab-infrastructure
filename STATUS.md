@@ -25,6 +25,12 @@ The earlier Ubuntu-on-`pve02` proposal is superseded. No separate runner on
 `pve02` is currently required; revisit that option only in response to
 measured capacity, redundancy, compatibility, or isolation needs.
 
+The workflow-label audit is complete. Twenty static Linux jobs in five
+repositories have reviewable PRs that require the `debian-13` and `ci` labels;
+`devtools` was already pinned correctly. The runner operations objective is
+also implemented locally with a read-only health check and maintenance,
+incident, and blue/green replacement guidance.
+
 ## Live runner state
 
 As of the last verification:
@@ -254,6 +260,12 @@ The following evidence confirms the runner can execute the intended workloads:
   ran on `gha-linux-01` in `trusted-ci` and passed all CI and cleanup steps.
 - The retired `ubuntuserver` VM was then deleted from Synology Virtual Machine
   Manager, completing removal of the final VM workload from the DS923+.
+- The runner health check was executed on production VM 103 through the QEMU
+  guest agent on 2026-10-04. The generated GitHub runner service and guest
+  agent were active and enabled, registration metadata was present, runner
+  version `2.337.0` was readable, both checked filesystems were 5% full, no
+  reboot was required, and the complete result contained zero failures and
+  zero warnings.
 
 ## Resolved cache observation
 
@@ -278,7 +290,9 @@ The repository now contains:
 - secure registration-token handoff over standard input;
 - scoped administrative sudo policy;
 - administrative hardening finalization;
-- a reusable Proxmox VM hardware profile; and
+- a reusable Proxmox VM hardware profile;
+- a read-only runner health check plus update, incident-capture, and
+  blue/green replacement runbook; and
 - common key-only SSH policy for Proxmox nodes.
 
 The complete fresh-clone lifecycle was exercised successfully on 2026-10-03.
@@ -291,15 +305,21 @@ narrow root-owned provisioning command retains passwordless sudo.
 1. Review the initial Windows workstation package baseline in normal use and
    add utilities only when a concrete need emerges. Keep Copilot and other
    interactive authentication outside the public configuration.
-2. Consider pinning remaining generic self-hosted Linux workflow selectors to
-   the custom `debian-13` and `ci` labels so future generic runners cannot
-   receive those jobs accidentally.
+2. Review the runner-label hardening PRs for
+   [`envoy`](https://github.com/gtvfx-envoy/envoy/pull/42),
+   [`robinhood`](https://github.com/gtvfx-envoy/robinhood/pull/2),
+   [`validation`](https://github.com/gtvfx-envoy/validation/pull/3),
+   [`despatch`](https://github.com/gtvfx-envoy/despatch/pull/20), and
+   [`envoy_utils`](https://github.com/gtvfx-envoy/envoy_utils/pull/14). Merge
+   only after their required checks pass and confirm representative Linux jobs
+   name `gha-linux-01`.
 3. Use measured queueing and utilization to decide whether more than
    `gha-linux-01` is needed. Do not create a fleet merely because the template
    supports one.
-4. Define a lightweight update, health-check, and replacement procedure for
-   `gha-linux-01` and template VM 104.
-5. If the cache post-job stall recurs, capture the live service journal and
+4. Exercise the documented update procedure during the next intentional
+   maintenance window; do not create work solely to test package upgrades.
+5. If the cache post-job stall recurs, follow the incident-capture runbook and
+   capture the live service journal and
    runner diagnostics before restarting anything.
 
 Puppet is deferred until a larger Windows fleet or continuous drift-remediation

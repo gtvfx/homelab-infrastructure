@@ -9,7 +9,7 @@ Linux runner. It does not register a runner with GitHub.
 - dedicated `labadmin` administrative account
 - unprivileged `runner` service account
 - GitHub Actions runner installed at `/home/runner/actions-runner`
-- runner service managed by systemd as `runner`
+- runner service managed by its generated `actions.runner.*.service` unit
 - labels: `self-hosted`, `Linux`, `X64`, `debian-13`, `ci`
 - organization runner group: `trusted-ci`
 
@@ -19,6 +19,11 @@ formatting/Clippy/tests, PyO3 linking, wheel building, and Python contract tests
 The validated virtual hardware is documented in the
 [`proxmox`](proxmox/README.md) profile. Host-specific identifiers and GitHub
 registration remain outside that reusable definition.
+
+Routine health checks, reviewed updates, incident capture, and blue/green
+replacement are documented in [`OPERATIONS.md`](OPERATIONS.md). The included
+[`check-runner-health.sh`](check-runner-health.sh) script is read-only and does
+not require GitHub credentials.
 
 ## Provision build tools
 
