@@ -166,6 +166,15 @@ successfully on shared Synology storage; the 256 GiB thin disk produced a
 38.76 GB archive. The VM restarted from the corrected boot target, and the
 QEMU guest agent plus expected VirtIO network interface returned successfully.
 
+Windows OpenSSH Server was then installed for repeatable remote administration.
+The service starts automatically, accepts only the designated local
+administrator, and uses the Codex host's existing Ed25519 public key. Password
+and keyboard-interactive SSH authentication are disabled. The inbound firewall
+rule is limited to the Private profile and trusted LAN. Post-hardening tests
+confirmed that key authentication succeeds, a no-key connection is rejected,
+stable-name resolution works, and WinGet is available in the administrator's
+user context. The QEMU guest agent remains an independent recovery channel.
+
 ## Completed validation
 
 The following evidence confirms the runner can execute the intended workloads:

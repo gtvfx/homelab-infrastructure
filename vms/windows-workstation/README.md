@@ -59,6 +59,15 @@ A signed RDP profile was also validated with both monitors, clipboard sharing,
 local audio, NLA, and unnecessary device redirection disabled. The signing and
 endpoint certificate identifiers remain private.
 
+Windows OpenSSH Server provides the non-interactive administration channel.
+It starts automatically, is restricted to the designated local administrator,
+and accepts the Codex host's existing Ed25519 public key. Password and
+keyboard-interactive authentication are disabled. Its firewall rule applies
+only to the Private profile and trusted LAN. Key login, rejection without a
+public key, stable-name access, and WinGet visibility in the administrator's
+user context were verified after hardening. Keep the QEMU guest agent enabled
+as an independent recovery path.
+
 During a stopped maintenance cycle on 2026-10-04, the boot order was reduced
 to the VirtIO system disk. Snapshot `baseline-2026-10-04` captured the system,
 EFI, and TPM disks. An independent compressed full backup completed on shared
