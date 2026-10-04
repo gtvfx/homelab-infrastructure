@@ -1,6 +1,6 @@
 # Current Status
 
-Last verified: 2026-10-03 (America/New_York)
+Last verified: 2026-10-04 (America/New_York)
 
 This file is the durable handoff for active homelab work. Verify mutable
 external state before acting, but do not reconstruct the project solely from
@@ -14,9 +14,8 @@ registration, representative CI, unregister, and deletion.
 
 The runner planning objective remains phase 3: determine the required Linux
 runner fleet from measured demand before creating or retaining additional
-workers. Infrastructure expansion is also active: `pve05` is now the fifth
-member of the `homelab` cluster and will host a dedicated Windows 11 lab
-workstation.
+workers. Roadmap phase 4 is operational: `pve05` is the fifth member of the
+`homelab` cluster and hosts the dedicated Windows 11 lab workstation.
 
 Linux CI is now consolidated on `gha-linux-01`. The older `ubuntuserver`
 GitHub runner registration and its VM on the Synology DS923+ have both been
@@ -71,8 +70,8 @@ nodes are configured on the Windows Codex host. Direct key-only access to
 ## `pve05` expansion
 
 `pve05` is a Dell OptiPlex Micro 7010 with an Intel Core i5-13500T, 64 GiB of
-memory, and a 1 TB NVMe device. It has no guests and joined the `homelab`
-cluster as node ID 5 on 2026-10-03.
+memory, and a 1 TB NVMe device. It joined the `homelab` cluster as node ID 5
+on 2026-10-03 and hosts VM 105, the Windows 11 lab workstation.
 
 Cluster admission was explicitly authorized on 2026-10-03. The final
 preflight confirmed that the existing four-node cluster was healthy and
@@ -153,6 +152,19 @@ resolution identifies the guest. An interactive RDP sign-in then succeeded
 using a password-protected local administrator account. Windows confirmed the
 account is enabled and belongs to both the local Administrators and Users
 groups.
+
+The Windows update loop completed on 2026-10-04. An offered preview cumulative
+update was intentionally deferred. A signed RDP profile was validated with
+multi-monitor display, clipboard sharing, local audio, NLA, and restricted
+device redirection; private endpoint, account, and certificate identifiers are
+excluded from this repository.
+
+During a controlled stopped cycle, the VM boot order was normalized to the
+VirtIO system disk only. Snapshot `baseline-2026-10-04` captured the system,
+EFI, and TPM disks. A separate compressed full backup then completed
+successfully on shared Synology storage; the 256 GiB thin disk produced a
+38.76 GB archive. The VM restarted from the corrected boot target, and the
+QEMU guest agent plus expected VirtIO network interface returned successfully.
 
 ## Completed validation
 
@@ -238,9 +250,9 @@ narrow root-owned provisioning command retains passwordless sudo.
 
 ## Next actions
 
-1. Apply Windows updates to VM 105, normalize disk-only boot during a
-   controlled stopped cycle, and establish a clean baseline snapshot or
-   backup.
+1. Add a reviewed WinGet Configuration baseline for the Windows workstation,
+   covering core utilities and deliberately selected runtime versions. Keep
+   authentication and machine-private values out of the public repository.
 2. Consider pinning remaining generic self-hosted Linux workflow selectors to
    the custom `debian-13` and `ci` labels so future generic runners cannot
    receive those jobs accidentally.
@@ -251,6 +263,11 @@ narrow root-owned provisioning command retains passwordless sudo.
    `gha-linux-01` and template VM 104.
 5. If the cache post-job stall recurs, capture the live service journal and
    runner diagnostics before restarting anything.
+
+Puppet is deferred until a larger Windows fleet or continuous drift-remediation
+requirement justifies its operating overhead. Start with WinGet Configuration
+and reviewed manual upgrades; do not schedule a blanket `winget upgrade --all`
+until package behavior has been observed.
 
 ## Continuity protocol
 

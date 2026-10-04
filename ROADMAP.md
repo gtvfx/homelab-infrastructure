@@ -91,7 +91,7 @@ show that one active runner is insufficient.
 
 ### 4. Windows 11 lab workstation
 
-**State:** Implementation started on `pve05`; VM shell created, installation pending.
+**State:** Operational on `pve05`; clean baseline captured on 2026-10-04.
 
 Create a dedicated Windows 11 Pro sandbox and interactive workstation that is
 separate from both CI runners and the isolated `win-jump` work VM. The initial
@@ -104,6 +104,18 @@ GPU passthrough. Map required external USB ports or devices individually; do
 not pass through `pve05`'s only USB controller because it also hosts the USB
 network adapter and internal Bluetooth and shares an IOMMU group. Establish a
 clean baseline backup or snapshot before using the VM as a sandbox.
+
+The initial Windows baseline is complete. Normal Windows updates, VirtIO
+integration, local-account RDP access, the signed multi-monitor RDP profile,
+disk-only boot order, a local Proxmox snapshot, and an independent backup on
+shared storage were validated on 2026-10-04.
+
+Use WinGet Configuration with PowerShell DSC as the first configuration-as-code
+layer for workstation utilities and deliberate runtime versions. Begin with
+reviewed, manually applied upgrades rather than an unattended blanket upgrade.
+Defer Puppet until multiple Windows systems or continuous drift correction make
+the additional server, agent, certificate, catalog, and module lifecycle
+worthwhile.
 
 ### 5. Reusable Windows GitHub Actions runner template
 

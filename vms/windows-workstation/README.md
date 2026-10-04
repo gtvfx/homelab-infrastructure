@@ -13,8 +13,9 @@ VM 105, `win11-lab-workstation`, is a dedicated interactive sandbox on
 - Microsoft Secure Boot keys and virtual TPM 2.0
 - VirtIO network adapter on `vmbr0`
 - QEMU guest-agent integration enabled
-- Windows and VirtIO driver ISOs attached during installation
+- Windows and VirtIO driver ISOs attached during installation, then ejected
 - no GPU passthrough
+- disk-only boot order after installation
 
 ## Physical USB map
 
@@ -47,17 +48,38 @@ Windows 11 Pro installation and VirtIO guest-tools installation were completed
 on 2026-10-04. The QEMU guest agent reports successfully to Proxmox. RDP is
 enabled with Network Level Authentication and its Windows Firewall rules are
 restricted to the trusted LAN subnet. The endpoint is reachable from the Codex
-workstation; Windows updates and the clean baseline remain pending.
+workstation. The normal Windows update loop is complete; an optional preview
+cumulative update was intentionally deferred.
 
 Interactive RDP sign-in was subsequently validated with a password-protected
 local administrator account. The private account and host identifiers are not
 recorded in this public repository.
 
+A signed RDP profile was also validated with both monitors, clipboard sharing,
+local audio, NLA, and unnecessary device redirection disabled. The signing and
+endpoint certificate identifiers remain private.
+
+During a stopped maintenance cycle on 2026-10-04, the boot order was reduced
+to the VirtIO system disk. Snapshot `baseline-2026-10-04` captured the system,
+EFI, and TPM disks. An independent compressed full backup completed on shared
+Synology storage with a final archive size of 38.76 GB. The VM then booted
+successfully, and its QEMU guest agent and VirtIO network interface returned.
+
+## Configuration-as-code direction
+
+Use a reviewed WinGet Configuration document backed by PowerShell DSC for the
+initial workstation software baseline. Candidate packages include PowerShell,
+Windows Terminal, Git, GitHub Copilot CLI, required Visual C++ redistributables,
+and deliberately selected .NET runtime or SDK major versions.
+
+Keep interactive authentication out of configuration files. Start with manual,
+reviewed upgrades instead of an unattended blanket upgrade. Puppet is deferred
+until the Windows fleet or drift-remediation requirements justify its server,
+agent, certificate, catalog, and module lifecycle.
+
 After installation:
 
-1. Apply Windows updates and confirm Device Manager has no unexpected devices.
-2. Confirm the QEMU guest agent reports an IP address to Proxmox.
-3. Enable RDP for trusted LAN or VPN access and retain Windows Firewall.
-4. Confirm USB 2 and USB 3 hot-plug behavior on the mapped external ports.
-5. Remove the Windows ISO from the boot order when installation is complete.
-6. Create a clean baseline snapshot or backup before sandbox use.
+1. Confirm Device Manager has no unexpected devices.
+2. Confirm USB 2 and USB 3 hot-plug behavior on the mapped external ports.
+3. Build and review the WinGet Configuration baseline before applying it.
+4. Keep Windows Update responsible for the operating system and security fixes.
