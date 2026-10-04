@@ -12,9 +12,11 @@ Roadmap phase 2 is complete. The Debian 13 Linux runner lifecycle on `pve04`
 has been exercised from a clean template clone through bootstrap,
 registration, representative CI, unregister, and deletion.
 
-The immediate planning objective is phase 3: determine the required Linux
+The runner planning objective remains phase 3: determine the required Linux
 runner fleet from measured demand before creating or retaining additional
-workers.
+workers. Infrastructure expansion is also active: `pve05` is prepared for
+cluster admission and will host a dedicated Windows 11 lab workstation after
+joining the cluster.
 
 Linux CI is now consolidated on `gha-linux-01`. The older `ubuntuserver`
 GitHub runner registration and its VM on the Synology DS923+ have both been
@@ -53,17 +55,51 @@ As of the last verification:
 ## Proxmox node access
 
 Key-only, non-interactive root SSH access was verified from the Codex host to
-all four nodes on 2026-10-03:
+all five nodes on 2026-10-03:
 
 - `pve01`: Proxmox VE 9.2.11, kernel 7.0.14-14-pve
 - `pve02`: Proxmox VE 9.2.11, kernel 7.0.14-14-pve
 - `pve03`: Proxmox VE 9.2.11, kernel 7.0.14-14-pve
 - `pve04`: Proxmox VE 9.2.21, kernel 7.0.14-20-pve
+- `pve05`: Proxmox VE 9.2.21, kernel 7.0.14-20-pve
 
 Connection addresses and private key material are intentionally excluded from
-this public repository. Protected local SSH aliases for `pve01` through
-`pve04` are configured on the Windows Codex host and were verified with
-non-interactive connections.
+this public repository. Protected local SSH aliases for the original four
+nodes are configured on the Windows Codex host. Direct key-only access to
+`pve05` is verified; its local alias remains housekeeping rather than a
+cluster-join prerequisite.
+
+## `pve05` expansion
+
+`pve05` is a Dell OptiPlex Micro 7010 with an Intel Core i5-13500T, 64 GiB of
+memory, and a 1 TB NVMe device. It has no guests and remains a standalone
+Proxmox node; no cluster-join command has been run.
+
+Pre-join preparation was completed and validated on 2026-10-03:
+
+- the timezone was corrected to `America/New_York`, with NTP synchronized;
+- the unusable enterprise PVE and Ceph sources were renamed with `.disabled`
+  suffixes rather than deleted;
+- the official `pve-no-subscription` repository was enabled;
+- 182 packages were upgraded successfully;
+- the node rebooted into kernel `7.0.14-20-pve` with Proxmox VE `9.2.21`,
+  exactly matching `pve04`;
+- `pveproxy`, `pvedaemon`, `pvestatd`, SSH, and Chrony were active, with no
+  failed systemd units and no pending package or reboot requirement;
+- local and local-LVM storage were active, and the management bridge retained
+  its expected address and default route; and
+- the existing four-node `homelab` cluster remained healthy and quorate.
+
+The only error-level current-boot journal entry was `blkmapd` reporting a
+missing NFS block-layout pipe. No NFS storage is configured on `pve05`, and
+the event did not affect node, storage, network, API, or Proxmox service
+health.
+
+The planned `win11-lab-workstation` VM is separate from `win-jump`. Use
+individual USB device or physical-port mappings instead of whole-controller
+passthrough because `pve05` has one USB controller shared with its USB network
+adapter and internal Bluetooth. External physical ports still need to be
+mapped with a test device before final VM passthrough configuration.
 
 ## Completed validation
 
@@ -149,15 +185,21 @@ narrow root-owned provisioning command retains passwordless sudo.
 
 ## Next actions
 
-1. Consider pinning remaining generic self-hosted Linux workflow selectors to
+1. Review and explicitly approve admission of the prepared, empty `pve05`
+   node to the `homelab` cluster. Revalidate cluster quorum immediately before
+   and after the join.
+2. After the join, map `pve05`'s external USB port paths with a test device and
+   build the separate `win11-lab-workstation` VM from the profile in the
+   roadmap.
+3. Consider pinning remaining generic self-hosted Linux workflow selectors to
    the custom `debian-13` and `ci` labels so future generic runners cannot
    receive those jobs accidentally.
-2. Use measured queueing and utilization to decide whether more than
+4. Use measured queueing and utilization to decide whether more than
    `gha-linux-01` is needed. Do not create a fleet merely because the template
    supports one.
-3. Define a lightweight update, health-check, and replacement procedure for
+5. Define a lightweight update, health-check, and replacement procedure for
    `gha-linux-01` and template VM 104.
-4. If the cache post-job stall recurs, capture the live service journal and
+6. If the cache post-job stall recurs, capture the live service journal and
    runner diagnostics before restarting anything.
 
 ## Continuity protocol

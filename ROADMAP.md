@@ -44,11 +44,13 @@ assumptions do not quietly remain active requirements.
 
 ### 1. Proxmox cluster and storage/network foundation
 
-**State:** Operational, with ongoing documentation and hardening.
+**State:** Operational; five-node expansion is in progress.
 
-Maintain the four-node Proxmox environment, shared Synology-backed storage,
-networking, key-only administrative access, hardware inventory, recovery
-procedures, and safe storage-management practices.
+Maintain the Proxmox environment, shared Synology-backed storage, networking,
+key-only administrative access, hardware inventory, recovery procedures, and
+safe storage-management practices. The original four-node cluster remains
+operational. `pve05` has completed standalone pre-join preparation and is the
+planned fifth member; admit it only after a final cluster-join review.
 
 ### 2. Reusable Linux GitHub Actions runner template
 
@@ -88,7 +90,23 @@ The older `ubuntuserver` registration and its VM on the Synology DS923+ were
 deleted. Additional workers are not required unless workload measurements
 show that one active runner is insufficient.
 
-### 4. Reusable Windows GitHub Actions runner template
+### 4. Windows 11 lab workstation
+
+**State:** Planned on `pve05`; host pre-join preparation is complete.
+
+Create a dedicated Windows 11 Pro sandbox and interactive workstation that is
+separate from both CI runners and the isolated `win-jump` work VM. The initial
+profile is 8 vCPUs, 24 GiB fixed memory, a 256 GiB thin-provisioned system
+disk, Q35, OVMF with Microsoft keys, virtual TPM 2.0, VirtIO storage and
+networking, and the QEMU guest agent.
+
+Use RDP from trusted LAN or VPN paths as the primary interface. Start without
+GPU passthrough. Map required external USB ports or devices individually; do
+not pass through `pve05`'s only USB controller because it also hosts the USB
+network adapter and internal Bluetooth and shares an IOMMU group. Establish a
+clean baseline backup or snapshot before using the VM as a sandbox.
+
+### 5. Reusable Windows GitHub Actions runner template
 
 **State:** Planned.
 
@@ -96,22 +114,22 @@ Build a reproducible Windows runner image for Windows-native builds and tests.
 Keep runner registration, machine identity, credentials, and repository state
 out of the template.
 
-### 5. Windows runner fleet
+### 6. Windows runner fleet
 
-**State:** Planned after phase 4.
+**State:** Planned after phase 5.
 
 Deploy and operate independently identifiable Windows workers with documented
 security boundaries, update policy, workload isolation, and replacement
 procedures.
 
-### 6. macOS GitHub Actions runner
+### 7. macOS GitHub Actions runner
 
 **State:** Planned.
 
 Use the existing Mac mini as a self-hosted macOS runner. Document registration,
 labels, access scope, update policy, health monitoring, and recovery behavior.
 
-### 7. OpenCue
+### 8. OpenCue
 
 **State:** Planned.
 
@@ -119,21 +137,21 @@ Evaluate and deploy OpenCue as a render-farm and workload orchestration
 environment, with documented storage, worker, network, and authentication
 requirements.
 
-### 8. Jellyfin and media services
+### 9. Jellyfin and media services
 
 **State:** Planned; exploratory work exists.
 
 Develop reproducible media-service hosting, encoding automation, storage
 layout, naming conventions, GPU use, backups, and operational documentation.
 
-### 9. Home Assistant, MQTT, and related services
+### 10. Home Assistant, MQTT, and related services
 
 **State:** Planned.
 
 Provide isolated, maintainable home-automation services with clear network,
 backup, upgrade, and device-integration boundaries.
 
-### 10. Kubernetes lab
+### 11. Kubernetes lab
 
 **State:** Planned.
 
@@ -141,21 +159,21 @@ Build a learning and testing environment for cluster lifecycle, networking,
 storage, ingress, secrets, deployments, and observability without making it a
 dependency of unrelated homelab services.
 
-### 11. Jenkins
+### 12. Jenkins
 
 **State:** Planned.
 
 Evaluate Jenkins for workloads that benefit from it, avoiding duplication with
 GitHub Actions unless there is a clear operational or educational purpose.
 
-### 12. Monitoring and observability
+### 13. Monitoring and observability
 
 **State:** Planned.
 
 Establish node, VM, service, storage, network, and CI-runner monitoring with
 useful alerting, dashboards, log retention, and documented response procedures.
 
-### 13. Internal package, artifact, cache, and API infrastructure
+### 14. Internal package, artifact, cache, and API infrastructure
 
 **State:** Planned.
 
