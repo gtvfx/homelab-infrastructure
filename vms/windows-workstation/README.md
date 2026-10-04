@@ -43,6 +43,13 @@ VirtIO ISO under `vioscsi\w11\amd64` so the 256 GiB disk becomes visible.
 After Windows starts, install the VirtIO network driver and QEMU guest agent;
 the VirtIO guest-tools installer can supply the complete supported driver set.
 
+Windows 11 Pro installation and VirtIO guest-tools installation were completed
+on 2026-10-04. The QEMU guest agent reports successfully to Proxmox. RDP is
+enabled with Network Level Authentication and its Windows Firewall rules are
+restricted to the trusted LAN subnet. The endpoint is reachable from the Codex
+workstation; interactive sign-in validation, Windows updates, and the clean
+baseline remain pending.
+
 After installation:
 
 1. Apply Windows updates and confirm Device Manager has no unexpected devices.

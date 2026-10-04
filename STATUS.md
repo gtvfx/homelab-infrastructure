@@ -139,10 +139,18 @@ confirming that `pve05` management and Corosync use the onboard NIC. Removing
 it did not affect connectivity or five-node quorum.
 
 VM 105 then started successfully, initialized its virtual TPM 2.0, and
-accepted the boot keystroke after a controlled reset. Runtime counters
-confirmed active reads from the Windows 11 ISO. The VM is currently running
-at the interactive Windows Setup stage; installation and guest configuration
-remain incomplete.
+accepted the boot keystroke after a controlled reset. Windows 11 Pro setup was
+completed and the user signed in. The full VirtIO guest-tools package was
+installed; the QEMU guest agent now reports the OS, active VirtIO network
+interface, DHCP address, and Windows filesystems to Proxmox. Both installation
+ISOs were ejected.
+
+RDP is enabled with Network Level Authentication. Only the standard RDP
+TCP/UDP user-mode firewall rules are enabled, the active VirtIO network is
+classified as Private, and the rules are restricted to the trusted LAN
+subnet. TCP port 3389 was reachable from the Codex workstation and local name
+resolution identifies the guest; an interactive RDP sign-in is still required
+for end-to-end acceptance.
 
 ## Completed validation
 
@@ -228,9 +236,9 @@ narrow root-owned provisioning command retains passwordless sudo.
 
 ## Next actions
 
-1. Complete Windows 11 installation in VM 105, install VirtIO and QEMU guest
-   agent drivers, enable RDP, and establish a clean baseline snapshot or
-   backup.
+1. Validate an interactive RDP sign-in to VM 105, apply Windows updates,
+   normalize disk-only boot during a controlled stopped cycle, and establish
+   a clean baseline snapshot or backup.
 2. Consider pinning remaining generic self-hosted Linux workflow selectors to
    the custom `debian-13` and `ci` labels so future generic runners cannot
    receive those jobs accidentally.
