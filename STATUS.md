@@ -107,11 +107,11 @@ Post-join validation from both `pve04` and `pve05` confirmed:
 - an active, empty 793.8 GiB `local-lvm` thin pool on `pve05` after extending
   the existing storage definition to nodes `pve02`, `pve03`, and `pve05`.
 
-The shared Synology NFS storage remains active on existing nodes but inactive
-on `pve05`. The NAS export ACL explicitly contains only the original four node
-addresses, so the `pve05` management address must be added to the
-`/volume1/proxmox` NFS permissions before that storage will mount there. This
-does not affect cluster quorum or `pve05` local storage.
+The Synology `/volume1/proxmox` NFS export ACL was expanded to include
+`pve05`. The shared storage then mounted automatically on `pve05` using NFS
+4.1, was readable, and reported the same healthy capacity and usage as on
+`pve04`. Five-node quorum and all cluster services remained healthy after the
+ACL change.
 
 Before the join, the only error-level current-boot journal entry was `blkmapd`
 reporting a missing NFS block-layout pipe. The event did not affect node,
@@ -208,21 +208,18 @@ narrow root-owned provisioning command retains passwordless sudo.
 
 ## Next actions
 
-1. Add `pve05`'s management address to the Synology
-   `/volume1/proxmox` NFS export permissions, then verify the `synology`
-   storage is active from `pve05`.
-2. Map `pve05`'s external USB port paths with a test device and
+1. Map `pve05`'s external USB port paths with a test device and
    build the separate `win11-lab-workstation` VM from the profile in the
    roadmap.
-3. Consider pinning remaining generic self-hosted Linux workflow selectors to
+2. Consider pinning remaining generic self-hosted Linux workflow selectors to
    the custom `debian-13` and `ci` labels so future generic runners cannot
    receive those jobs accidentally.
-4. Use measured queueing and utilization to decide whether more than
+3. Use measured queueing and utilization to decide whether more than
    `gha-linux-01` is needed. Do not create a fleet merely because the template
    supports one.
-5. Define a lightweight update, health-check, and replacement procedure for
+4. Define a lightweight update, health-check, and replacement procedure for
    `gha-linux-01` and template VM 104.
-6. If the cache post-job stall recurs, capture the live service journal and
+5. If the cache post-job stall recurs, capture the live service journal and
    runner diagnostics before restarting anything.
 
 ## Continuity protocol
